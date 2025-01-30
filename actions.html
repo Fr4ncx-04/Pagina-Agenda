@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+<head>
+    <style>
+        body{
+            background-color: #F0F7F4;
+        }
+    
+        .navbar{
+            background-color: white;
+            border-radius: 5px;
+            width: 100%;
+            height: auto;
+        }
+
+        .container-fluid img{
+            width: 200px;
+            height: 100px;
+        }
+        
+        .navbar .navbar-collapse{
+            justify-content: flex-end;
+            margin: 0;
+            position: end center;
+            border: 2px;
+            color : white;
+        }
+
+        .pagination .page-link {
+            align-items: center;
+            border-color: #931924 !important;
+            color: #931924 !important;
+        }
+    
+            .pagination .page-link:hover {
+                background-color: #931924 !important;
+                color: white !important;
+            }
+    
+        .btn-primary {
+            background-color: #B41F2B !important;
+            border-color: #B41F2B !important;
+        }
+    
+            .btn-primary:hover {
+                background-color: #931924 !important;
+                border-color: #931924 !important;
+            }
+    
+        .card {
+            border-radius: 10px;
+            border: none;
+        }
+    
+        .card-header {
+            border-bottom: 1px solid rgba(0,0,0,.1);
+            border-radius: 10px 10px 0 0 !important;
+        }
+    
+        .table th {
+            font-weight: 500;
+            padding: 1rem;
+        }
+    
+        .table td {
+            padding: 1rem;
+        }
+    
+        .table tbody tr:hover {
+            background-color: rgba(180, 31, 43, 0.02);
+        }    
+    </style>   
+    </head>
+    <body>   
+        <nav class="navbar">
+            <div class="container-fluid">
+                <div>
+                    <img src="/img/logo_blanco.jpeg" alt="logo">
+                </div>
+                <div class="navbar-collapse" id="navbarSupportedContent">
+                    <button class="btn-outline-success" onclick="">Cerrar sesion</button>
+                </div>
+            </div>
+        </nav>
+        
+        <div class="container-fluid py-4" style="background-color: #F0F7F4; min-height: 100vh;">
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-10">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                            <h3 class="mb-0" style="color: #B41F2B;">Acciones</h3>
+                            <a @onclick="(async()=> await viewModel.RegistrarPersonaCommand.ExecuteAsync())" class="btn btn-primary btn-sm px-4">
+                                <i class="fas fa-plus me-2"></i>Agregar Acciones
+                            </a>
+                            
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="text-muted">Folio</th>
+                                            <th scope="col" class="text-muted">Nombre de la Accion</th>
+                                            <th scope="col" class="text-muted">Fecha Captura</th>
+                                    </thead>
+                                    <tbody>
+                                            <tr style="height:30px">
+                                                <td>@item.Folio</td>
+                                                <td>@item.Nombre</td>
+                                                <td>@item.FechaCaptura.ToString("dd/MM/yyyy")</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-primary btn-sm px-4" @onclick="(async()=> { await viewModel.ImprimirReportePersonaCommand.ExecuteAsync(item); })">
+                                                        Asignar Fechas
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <br />
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination justify-content-center">
+                                    <li class="page-item"><a class="page-link" href="#">Anterior</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">Siguiente</a></li>
+                                </ul>
+                            </nav>
+                            <br />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>        
+    </body>
+</html>
