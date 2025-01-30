@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario Semanal</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .calendario {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            overflow-x: auto;
+            height: auto;
+        }
+
+        .meses {
+            display: grid;
+            grid-template-columns: repeat(12, minmax(200px, 1fr));
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .mes {
+            padding: 10px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            border-right: 1px solid #ccc;
+        }
+
+        .semanas-container {
+            display: grid;
+            grid-template-columns: repeat(12, minmax(200px, 1fr));
+        }
+
+        .columna-mes {
+            border-right: 1px solid #ccc;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .semana {
+            border-bottom: 1px solid #eee;
+            min-height: 80px;
+            height: auto;
+            position: relative;
+            padding: 25px 5px 5px 5px;
+            transition: all 0.3s ease;
+        }
+
+        .semana:hover {
+            background-color: #f5f5f5;
+            cursor: pointer;
+        }
+
+        .numero-semana {
+            font-size: 12px;
+            color: #666;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            background: #f8f8f8;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        .evento {
+            background-color: #ffd700;
+            margin: 2px;
+            padding: 5px;
+            border-radius: 3px;
+            font-size: 11px;
+            cursor: pointer;
+            position: relative;
+            word-wrap: break-word;
+        }
+
+        .evento:hover {
+            background-color: #ffed4a;
+        }
+
+        .evento-acciones {
+            display: none;
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            gap: 5px;
+        }
+
+        .evento:hover .evento-acciones {
+            display: flex;
+        }
+
+        .btn-editar,
+        .btn-eliminar {
+            padding: 2px 5px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 10px;
+            color: white;
+        }
+
+        .btn-editar {
+            background-color: #4CAF50;
+        }
+
+        .btn-eliminar {
+            background-color: #f44336;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-contenido {
+            background-color: white;
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+            margin: 100px auto;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .formulario {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .formulario input, 
+        .formulario textarea,
+        .formulario select {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+        }
+
+        .formulario textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .formulario button {
+            padding: 8px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .formulario button:hover {
+            background-color: #45a049;
+        }
+
+        .cerrar {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .calendario {
+                font-size: 14px;
+            }
+            
+            .semanas-container {
+                width: max-content;
+                min-width: 100%;
+            }
+            
+            .mes {
+                min-width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calendario">
+        <div class="meses">
+            <div class="mes">ENERO</div>
+            <div class="mes">FEBRERO</div>
+            <div class="mes">MARZO</div>
+            <div class="mes">ABRIL</div>
+            <div class="mes">MAYO</div>
+            <div class="mes">JUNIO</div>
+            <div class="mes">JULIO</div>
+            <div class="mes">AGOSTO</div>
+            <div class="mes">SEPTIEMBRE</div>
+            <div class="mes">OCTUBRE</div>
+            <div class="mes">NOVIEMBRE</div>
+            <div class="mes">DICIEMBRE</div>
+        </div>
+        <div class="semanas-container">
+            <!-- Se generará dinámicamente -->
+        </div>
+    </div>
+
+    <!-- Modal para agregar/editar evento -->
+    <div id="modal" class="modal">
+        <div class="modal-contenido">
+            <span class="cerrar">&times;</span>
+            <h2 id="modal-titulo">Agregar Evento</h2>
+            <form class="formulario">
+                <input type="text" placeholder="Título del evento" id="titulo" required>
+                <input type="number" placeholder="Día del mes" id="dia" min="1" max="31" required>
+                <textarea placeholder="Descripción del evento" id="descripcion" required></textarea>
+                <button type="submit">Guardar Evento</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Generar la estructura del calendario
+        const semanasContainer = document.querySelector('.semanas-container');
+        let eventoEnEdicion = null;
+        
+        for (let mes = 0; mes < 12; mes++) {
+            const columnaMes = document.createElement('div');
+            columnaMes.className = 'columna-mes';
+            
+            for (let semana = 1; semana <= 4; semana++) {
+                const semanaDiv = document.createElement('div');
+                semanaDiv.className = 'semana';
+                semanaDiv.dataset.mes = mes + 1;
+                semanaDiv.dataset.semana = semana;
+                
+                const numeroSemana = document.createElement('div');
+                numeroSemana.className = 'numero-semana';
+                numeroSemana.textContent = `Semana ${semana}`;
+                semanaDiv.appendChild(numeroSemana);
+                
+                semanaDiv.addEventListener('click', (e) => {
+                    if (e.target === semanaDiv) {
+                        mostrarModal(e);
+                    }
+                });
+                columnaMes.appendChild(semanaDiv);
+            }
+            
+            semanasContainer.appendChild(columnaMes);
+        }
+
+        // Funcionalidad del modal
+        const modal = document.getElementById('modal');
+        const modalTitulo = document.getElementById('modal-titulo');
+        const cerrar = document.querySelector('.cerrar');
+        const formulario = document.querySelector('.formulario');
+        let semanaSeleccionada = null;
+
+        function mostrarModal(e, evento = null) {
+            modal.style.display = 'block';
+            semanaSeleccionada = e.currentTarget;
+            
+            if (evento) {
+                // Modo edición
+                eventoEnEdicion = evento;
+                modalTitulo.textContent = 'Editar Evento';
+                const datos = evento.dataset;
+                document.getElementById('titulo').value = datos.titulo;
+                document.getElementById('dia').value = datos.dia;
+                document.getElementById('descripcion').value = datos.descripcion;
+            } else {
+                // Modo nuevo evento
+                eventoEnEdicion = null;
+                modalTitulo.textContent = 'Agregar Evento';
+                formulario.reset();
+            }
+        }
+
+        function ajustarAlturaSemanaPorContenido(semana) {
+            const eventos = semana.querySelectorAll('.evento');
+            if (eventos.length > 0) {
+                const alturaTotal = Array.from(eventos).reduce((total, evento) => {
+                    return total + evento.offsetHeight + 4; // 4 por el margen
+                }, 25); // 25 es el padding inicial para el número de semana
+                semana.style.height = `${alturaTotal}px`;
+            } else {
+                semana.style.height = '80px'; // altura mínima
+            }
+        }
+
+        function crearEvento(titulo, dia, descripcion, semana) {
+            const evento = document.createElement('div');
+            evento.className = 'evento';
+            evento.dataset.titulo = titulo;
+            evento.dataset.dia = dia;
+            evento.dataset.descripcion = descripcion;
+            
+            evento.innerHTML = `
+                Día ${dia}: ${titulo}
+                <div class="evento-acciones">
+                    <button class="btn-editar">✏️</button>
+                    <button class="btn-eliminar">🗑️</button>
+                </div>
+            `;
+
+            // Agregar manejadores de eventos para editar y eliminar
+            evento.querySelector('.btn-editar').addEventListener('click', (e) => {
+                e.stopPropagation();
+                mostrarModal({ currentTarget: semana }, evento);
+            });
+
+            evento.querySelector('.btn-eliminar').addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (confirm('¿Estás seguro de que deseas eliminar este evento?')) {
+                    evento.remove();
+                    ajustarAlturaSemanaPorContenido(semana);
+                }
+            });
+
+            return evento;
+        }
+
+        cerrar.onclick = function() {
+            modal.style.display = 'none';
+            eventoEnEdicion = null;
+        }
+
+        window.onclick = function(e) {
+            if (e.target == modal) {
+                modal.style.display = 'none';
+                eventoEnEdicion = null;
+            }
+        }
+
+        formulario.onsubmit = function(e) {
+            e.preventDefault();
+            const titulo = document.getElementById('titulo').value;
+            const dia = document.getElementById('dia').value;
+            const descripcion = document.getElementById('descripcion').value;
+
+            if (eventoEnEdicion) {
+                // Actualizar evento existente
+                eventoEnEdicion.dataset.titulo = titulo;
+                eventoEnEdicion.dataset.dia = dia;
+                eventoEnEdicion.dataset.descripcion = descripcion;
+                eventoEnEdicion.innerHTML = `
+                    Día ${dia}: ${titulo}
+                    <div class="evento-acciones">
+                        <button class="btn-editar">✏️</button>
+                        <button class="btn-eliminar">🗑️</button>
+                    </div>
+                `;
+            } else {
+                // Crear nuevo evento
+                const evento = crearEvento(titulo, dia, descripcion, semanaSeleccionada);
+                semanaSeleccionada.appendChild(evento);
+            }
+            
+            ajustarAlturaSemanaPorContenido(semanaSeleccionada);
+            modal.style.display = 'none';
+            formulario.reset();
+            eventoEnEdicion = null;
+        }
+    </script>
+</body>
+</html>
