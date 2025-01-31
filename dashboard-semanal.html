@@ -5,234 +5,239 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendario Semanal</title>
     <style>
-        * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+    * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-body {
-    font-family: 'Arial', sans-serif;
-    padding: 20px;
-    background-color: #f4f4f9;
-}
+        body {
+            font-family: 'Arial', sans-serif;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
 
-.calendario {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    overflow-x: auto;
-    height: auto;
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
+        .calendario {
+        width: 100%;
+        max-width: 1920px;
+        margin: 0 auto;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
 
-.meses {
-    display: grid;
-    grid-template-columns: repeat(12, minmax(200px, 1fr));
-    background-color: #4a90e2;
-    color: white;
-    border-radius: 10px 10px 0 0;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
+        .meses {
+            display: grid;
+            grid-template-columns: repeat(12, minmax(200px, 1fr));
+            color: white;
+            border-radius: 10px 10px 0 0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .mes {
+        padding: 15px;
+        font-size: 16px;
+        text-align: center;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background-color: #4a90e2;  /* Added consistent background color */
+        }
 
-.mes {
-    padding: 15px;
-    text-align: center;
-    font-size: 14px;
-    font-weight: bold;
-    transition: background-color 0.3s;
-}
 
-.mes:hover {
-    background-color: #357ab8;
-}
+        .mes:hover {
+            background-color: #357ab8;
+        }
 
-.semanas-container {
-    display: grid;
-    grid-template-columns: repeat(12, minmax(200px, 1fr));
-}
+        /* Rest of the CSS remains the same */
+        .semanas-container {
+            display: grid;
+            grid-template-columns: repeat(12, minmax(200px, 1fr));
+        }
 
-.columna-mes {
-    border-right: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
-}
+        .columna-mes {
+            border-right: 1px solid #ccc;
+            border-bottom: 1px solid #ccc;
+            min-width: 150px;
+            flex-grow: 1;
 
-.semana {
-    border-bottom: 1px solid #eee;
-    min-height: 80px;
-    height: auto;
-    position: relative;
-    padding: 25px 5px 5px 5px;
-    transition: all 0.3s ease;
-    background-color: #ffffff;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
+        }
 
-.semana:hover {
-    background-color: #f0f8ff;
-    transform: translateY(-2px);
-    cursor: pointer;
-}
+        .semana {
+            border-bottom: 1px solid #eee;
+            min-height: 100px;
+            height: auto;
+            position: relative;
+            padding: 40px 15px 15px 15px;
+            transition: all 0.3s ease;
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            min-height: 150px;
+        }
 
-.numero-semana {
-    font-size: 12px;
-    color: #666;
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    background: #f8f8f8;
-    padding: 2px 5px;
-    border-radius: 3px;
-}
+        .semana:hover {
+            background-color: #f0f8ff;
+            transform: translateY(-2px);
+            cursor: pointer;
+        }
 
-.evento {
-    background-color: #ffd700;
-    margin: 2px;
-    padding: 5px;
-    border-radius: 3px;
-    font-size: 11px;
-    cursor: pointer;
-    position: relative;
-    word-wrap: break-word;
-    transition: background-color 0.3s, transform 0.2s;
-}
+        .numero-semana {
+            font-size: 12px;
+            color: #666;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            background: #f8f8f8;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
 
-.evento:hover {
-    background-color: #ffed4a;
-    transform: scale(1.02);
-}
+        .evento {
+            background-color: #ffd700;
+            margin: 2px;
+            padding: 5px;
+            border-radius: 3px;
+            font-size: 11px;
+            cursor: pointer;
+            position: relative;
+            word-wrap: break-word;
+            transition: background-color 0.3s, transform 0.2s;
+        }
 
-.evento-acciones {
-    display: none;
-    position: absolute;
-    right: 5px;
-    top: 5px;
-    gap: 5px;
-}
+        .evento:hover {
+            background-color: #ffed4a;
+            transform: scale(1.02);
+        }
 
-.evento:hover .evento-acciones {
-    display: flex;
-}
+        .evento-acciones {
+            display: none;
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            gap: 5px;
+        }
 
-.btn-editar,
-.btn-eliminar {
-    padding: 2px 5px;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 10px;
-    color: white;
-    transition: background-color 0.3s;
-}
+        .evento:hover .evento-acciones {
+            display: flex;
+        }
 
-.btn-editar {
-    background-color: #4CAF50;
-}
+        .btn-editar,
+        .btn-eliminar {
+            padding: 2px 5px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 10px;
+            color: white;
+            transition: background-color 0.3s;
+        }
 
-.btn-editar:hover {
-    background-color: #45a049;
-}
+        .btn-editar {
+            background-color: #4CAF50;
+        }
 
-.btn-eliminar {
-    background-color: #f44336;
-}
+        .btn-editar:hover {
+            background-color: #45a049;
+        }
 
-.btn-eliminar:hover {
-    background-color: #d32f2f;
-}
+        .btn-eliminar {
+            background-color: #f44336;
+        }
 
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    z-index: 1000;
-    animation: fadeIn 0.3s;
-}
+        .btn-eliminar:hover {
+            background-color: #d32f2f;
+        }
 
-.modal-contenido {
-    background-color: white;
-    padding: 20px;
-    width: 90%;
-    max-width: 500px;
-    margin: 100px auto;
-    border-radius: 5px;
-    position: relative;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    animation: slideIn 0.3s;
-}
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            animation: fadeIn 0.3s;
+        }
 
-.formulario {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
+        .modal-contenido {
+            background-color: white;
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+            margin: 100px auto;
+            border-radius: 5px;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.3s;
+        }
 
-.formulario input,
-.formulario textarea,
-.formulario select {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 100%;
-    transition: border-color 0.3s;
-}
+        .formulario {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-.formulario input:focus,
-.formulario textarea:focus,
-.formulario select:focus {
-    border-color: #4a90e2;
-    outline: none;
-}
+        .formulario input,
+        .formulario textarea,
+        .formulario select {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            transition: border-color 0.3s;
+        }
 
-.formulario button {
-    padding: 8px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
+        .formulario input:focus,
+        .formulario textarea:focus,
+        .formulario select:focus {
+            border-color: #4a90e2;
+            outline: none;
+        }
 
-.formulario button:hover {
-    background-color: #45a049;
-}
+        .formulario button {
+            padding: 8px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
-.cerrar {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    cursor: pointer;
-    font-size: 20px;
-}
+        .formulario button:hover {
+            background-color: #45a049;
+        }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
+        .cerrar {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            cursor: pointer;
+            font-size: 20px;
+        }
 
-@keyframes slideIn {
-    from {
-        transform: translateY(-20px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body>
