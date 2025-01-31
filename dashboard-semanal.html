@@ -350,21 +350,18 @@
             console.log(`Eliminar evento: Mes: ${mes}, Semana: ${semana}, Index: ${index}`); // Depuración
 
             if (confirm('¿Estás seguro de eliminar este evento?')) {
-                // Eliminar el evento del objeto de eventos guardados
                 eventosGuardados[mes][semana].splice(index, 1);
                 
-                // Si la semana ya no tiene eventos, la eliminamos del objeto
                 if (eventosGuardados[mes][semana].length === 0) {
                     delete eventosGuardados[mes][semana];
                 }
 
-                // Si el mes ya no tiene semanas con eventos, lo eliminamos del almacenamiento
                 if (Object.keys(eventosGuardados[mes]).length === 0) {
                     delete eventosGuardados[mes];
                 }
 
                 guardarEventos();
-                renderizarEventosMes(mes); // Renderizamos los eventos del mes actual
+                renderizarEventosMes(mes); 
             }
         }
 
