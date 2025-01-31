@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendario con Menú</title>
+    <title>Calendario Detallado</title>
     <style>
         * {
             box-sizing: border-box;
@@ -12,9 +12,9 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f9;
+            font-family: Arial, sans-serif;
             display: flex;
+            background-color: #f4f4f4;
             height: 100vh;
         }
 
@@ -59,128 +59,91 @@
         .contenido-principal {
             flex-grow: 1;
             padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
             overflow: auto;
         }
 
-        .calendario {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            height: auto;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .meses {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            
-            color: white;
-            border-radius: 10px 10px 0 0;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
         .mes {
-            padding: 10px;
-            font-size: 12px;
-            text-align: center;
-            border: 1px solid #ccc;
-            border-radius: 10px;
             background-color: #4a90e2;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .semanas-container {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-        }
-
-        .columna-mes {
-            border-right: 1px solid #ccc;
-            border-bottom: 1px solid #ccc;
-        }
-
-        .semana {
-            border-bottom: 1px solid #eee;
-            min-height: 80px;
-            height: auto;
-            position: relative;
-            padding: 30px 10px 10px 10px;
-            background-color: #ffffff;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .numero-semana {
-            font-size: 10px;
-            color: #666;
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            background: #f8f8f8;
-            padding: 2px 5px;
-            border-radius: 3px;
-        }
-
-        .evento {
-            background-color: #ffd700;
-            margin: 2px;
-            padding: 3px;
-            border-radius: 3px;
-            font-size: 10px;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
             cursor: pointer;
-            position: relative;
+            transition: transform 0.3s;
+            width: calc(25% - 10px);
+            text-align: center;
         }
 
-        .modal {
-            display: none;
+        .mes:hover {
+            transform: scale(1.05);
+        }
+
+        .modal-detalle-mes {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(0,0,0,0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
             z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
         }
 
         .modal-contenido {
             background-color: white;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 10px;
             padding: 20px;
-            width: 90%;
-            max-width: 500px;
-            margin: 100px auto;
+            max-height: 80%;
+            overflow-y: auto;
+            transform: scale(0.7);
+            transition: all 0.3s;
+        }
+
+        .modal-detalle-mes.mostrar {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-detalle-mes.mostrar .modal-contenido {
+            transform: scale(1);
+        }
+
+        .semana {
+            background-color: #f1f1f1;
+            margin-bottom: 10px;
+            padding: 10px;
             border-radius: 5px;
         }
 
-        .formulario {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .formulario input,
-        .formulario textarea {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        .formulario button {
-            padding: 8px;
-            background-color: #4CAF50;
+        .evento {
+            background-color: #4a90e2;
             color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
+            margin: 5px 0;
+            padding: 5px;
+            border-radius: 3px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .cerrar {
-            float: right;
+        .evento-acciones {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-editar, .btn-eliminar {
+            background: none;
+            border: none;
             cursor: pointer;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -191,189 +154,230 @@
             <li><a href="#">Inicio</a></li>
             <li><a href="#">Calendario</a></li>
             <li><a href="/home.html">Programas</a></li>
-            <li><a href="#">Configuracion de usuarios</a></li>
+            <li><a href="#">Configuracion</a></li>
             <li><a href="#">Salir</a></li>
         </ul>
     </div>
-    
+
     <div class="contenido-principal">
-        <div class="calendario">
-            <div class="meses">
-                <div class="mes">ENERO</div>
-                <div class="mes">FEBRERO</div>
-                <div class="mes">MARZO</div>
-                <div class="mes">ABRIL</div>
-                <div class="mes">MAYO</div>
-                <div class="mes">JUNIO</div>
-                <div class="mes">JULIO</div>
-                <div class="mes">AGOSTO</div>
-                <div class="mes">SEPTIEMBRE</div>
-                <div class="mes">OCTUBRE</div>
-                <div class="mes">NOVIEMBRE</div>
-                <div class="mes">DICIEMBRE</div>
-            </div>
-            <div class="semanas-container">
-                <!-- Se generará dinámicamente -->
+        <div class="mes" data-mes="1">Enero</div>
+        <div class="mes" data-mes="2">Febrero</div>
+        <div class="mes" data-mes="3">Marzo</div>
+        <div class="mes" data-mes="4">Abril</div>
+        <div class="mes" data-mes="5">Mayo</div>
+        <div class="mes" data-mes="6">Junio</div>
+        <div class="mes" data-mes="7">Julio</div>
+        <div class="mes" data-mes="8">Agosto</div>
+        <div class="mes" data-mes="9">Septiembre</div>
+        <div class="mes" data-mes="10">Octubre</div>
+        <div class="mes" data-mes="11">Noviembre</div>
+        <div class="mes" data-mes="12">Diciembre</div>
+    </div>
+
+    <div class="modal-detalle-mes">
+        <div class="modal-contenido">
+            <h2 id="titulo-mes"></h2>
+            <div id="contenido-semanas"></div>
+            <div class="modal-botones">
+                <button id="agregar-evento">+ Agregar Evento</button>
+                <button id="cerrar-modal">Cerrar</button>
             </div>
         </div>
     </div>
 
-    <div id="modal" class="modal">
+    <div id="modal-evento" class="modal-detalle-mes">
         <div class="modal-contenido">
-            <span class="cerrar">&times;</span>
-            <h2 id="modal-titulo">Agregar Evento</h2>
-            <form class="formulario">
-                <input type="text" placeholder="Título del evento" id="titulo" required>
-                <input type="number" placeholder="Día del mes" id="dia" min="1" max="31" required>
-                <textarea placeholder="Descripción del evento" id="descripcion" required></textarea>
-                <button type="submit">Guardar Evento</button>
+            <h2 id="modal-evento-titulo">Agregar Evento</h2>
+            <form id="formulario-evento">
+                <input type="text" id="evento-nombre" placeholder="Nombre del evento" required>
+                <select id="evento-semana" required>
+                    <option value="">Seleccionar Semana</option>
+                    <option value="1">Semana 1</option>
+                    <option value="2">Semana 2</option>
+                    <option value="3">Semana 3</option>
+                    <option value="4">Semana 4</option>
+                </select>
+                <textarea id="evento-descripcion" placeholder="Descripción"></textarea>
+                <div>
+                    <button type="submit">Guardar</button>
+                    <button type="button" id="cancelar-evento">Cancelar</button>
+                </div>
             </form>
         </div>
     </div>
 
     <script>
-        const semanasContainer = document.querySelector('.semanas-container');
-        let eventoEnEdicion = null;
-        let semanaSeleccionada = null;
+    document.addEventListener('DOMContentLoaded', () => {
+        const meses = document.querySelectorAll('.mes');
+        const modalDetalleMes = document.querySelector('.modal-detalle-mes');
+        const modalEvento = document.getElementById('modal-evento');
+        const tituloMes = document.getElementById('titulo-mes');
+        const contenidoSemanas = document.getElementById('contenido-semanas');
+        const cerrarModal = document.getElementById('cerrar-modal');
+        const agregarEventoBtn = document.getElementById('agregar-evento');
+        const formularioEvento = document.getElementById('formulario-evento');
+        const cancelarEventoBtn = document.getElementById('cancelar-evento');
 
-        // Modal functions
-        function mostrarModal(e, evento = null) {
-            const modal = document.getElementById('modal');
-            const modalTitulo = document.getElementById('modal-titulo');
-            modal.style.display = 'block';
-            semanaSeleccionada = e.currentTarget;
-            
-            if (evento) {
-                eventoEnEdicion = evento;
-                modalTitulo.textContent = 'Editar Evento';
-                const datos = evento.dataset;
-                document.getElementById('titulo').value = datos.titulo;
-                document.getElementById('dia').value = datos.dia;
-                document.getElementById('descripcion').value = datos.descripcion;
-            } else {
-                eventoEnEdicion = null;
-                modalTitulo.textContent = 'Agregar Evento';
-                document.querySelector('.formulario').reset();
-            }
+        let eventosGuardados = JSON.parse(localStorage.getItem('eventosCalendario')) || {};
+
+        function guardarEventos() {
+            localStorage.setItem('eventosCalendario', JSON.stringify(eventosGuardados));
+            actualizarVistaMeses();
         }
 
-        function crearEvento(titulo, dia, descripcion, semana) {
-            const evento = document.createElement('div');
-            evento.className = 'evento';
-            evento.dataset.titulo = titulo;
-            evento.dataset.dia = dia;
-            evento.dataset.descripcion = descripcion;
-            
-            evento.innerHTML = `
-                Día ${dia}: ${titulo}
-                <div class="evento-acciones">
-                    <button class="btn-editar">✏️</button>
-                    <button class="btn-eliminar">🗑️</button>
-                </div>
-            `;
+        function renderizarEventosMes(mes) {
+            contenidoSemanas.innerHTML = '';
+            const eventos = eventosGuardados[mes] || {};
 
-            // Event listeners for edit and delete
-            evento.querySelector('.btn-editar').addEventListener('click', (e) => {
-                e.stopPropagation();
-                mostrarModal({ currentTarget: semana }, evento);
-            });
-
-            evento.querySelector('.btn-eliminar').addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (confirm('¿Estás seguro de que deseas eliminar este evento?')) {
-                    evento.remove();
-                    ajustarAlturaSemanaPorContenido(semana);
-                }
-            });
-
-            return evento;
-        }
-
-        function ajustarAlturaSemanaPorContenido(semana) {
-            const eventos = semana.querySelectorAll('.evento');
-            if (eventos.length > 0) {
-                const alturaTotal = Array.from(eventos).reduce((total, evento) => {
-                    return total + evento.offsetHeight + 4;
-                }, 25);
-                semana.style.height = `${alturaTotal}px`;
-            } else {
-                semana.style.height = '80px';
-            }
-        }
-
-        // Generate calendar structure
-        for (let mes = 0; mes < 12; mes++) {
-            const columnaMes = document.createElement('div');
-            columnaMes.className = 'columna-mes';
-            
             for (let semana = 1; semana <= 4; semana++) {
                 const semanaDiv = document.createElement('div');
-                semanaDiv.className = 'semana';
-                semanaDiv.dataset.mes = mes + 1;
-                semanaDiv.dataset.semana = semana;
-                
-                const numeroSemana = document.createElement('div');
-                numeroSemana.className = 'numero-semana';
-                numeroSemana.textContent = `Semana ${semana}`;
-                semanaDiv.appendChild(numeroSemana);
-                
-                semanaDiv.addEventListener('click', (e) => {
-                    if (e.target === semanaDiv) {
-                        mostrarModal(e);
-                    }
+                semanaDiv.classList.add('semana');
+                semanaDiv.innerHTML = `<h3>Semana ${semana}</h3>`;
+
+                const eventosEnSemana = eventos[semana] || [];
+                eventosEnSemana.forEach((evento, index) => {
+                    const eventoDiv = document.createElement('div');
+                    eventoDiv.classList.add('evento');
+                    eventoDiv.innerHTML = `
+                        <span>${evento.nombre}</span>
+                        <div class="evento-acciones">
+                            <button class="btn-editar" data-semana="${semana}" data-index="${index}">✏️</button>
+                            <button class="btn-eliminar" data-semana="${semana}" data-index="${index}">🗑️</button>
+                        </div>
+                    `;
+                    semanaDiv.appendChild(eventoDiv);
                 });
-                columnaMes.appendChild(semanaDiv);
+
+                contenidoSemanas.appendChild(semanaDiv);
             }
-            
-            semanasContainer.appendChild(columnaMes);
+
+            document.querySelectorAll('.btn-editar').forEach(btn => {
+                btn.addEventListener('click', editarEvento);
+            });
+
+            document.querySelectorAll('.btn-eliminar').forEach(btn => {
+                btn.addEventListener('click', eliminarEvento);
+            });
         }
 
-        // Modal close functionality
-        const modal = document.getElementById('modal');
-        const cerrar = document.querySelector('.cerrar');
-        const formulario = document.querySelector('.formulario');
-
-        cerrar.onclick = function() {
-            modal.style.display = 'none';
-            eventoEnEdicion = null;
+        function actualizarVistaMeses() {
+            meses.forEach(mes => {
+                const numeroMes = mes.dataset.mes;
+                const eventos = eventosGuardados[numeroMes] || {};
+                mes.innerHTML = `<h2>${mes.textContent}</h2>`;
+                
+                Object.values(eventos).forEach(semana => {
+                    semana.forEach(evento => {
+                        const eventoDiv = document.createElement('div');
+                        eventoDiv.classList.add('evento-mes');
+                        eventoDiv.textContent = evento.nombre;
+                        mes.appendChild(eventoDiv);
+                    });
+                });
+            });
         }
 
-        window.onclick = function(e) {
-            if (e.target == modal) {
-                modal.style.display = 'none';
-                eventoEnEdicion = null;
-            }
-        }
+        meses.forEach(mes => {
+            mes.addEventListener('click', () => {
+                const numeroMes = mes.dataset.mes;
+                tituloMes.textContent = mes.textContent;
+                formularioEvento.dataset.mes = numeroMes;
+                renderizarEventosMes(numeroMes);
+                modalDetalleMes.classList.add('mostrar');
+            });
+        });
 
-        formulario.onsubmit = function(e) {
+        cerrarModal.addEventListener('click', () => {
+            modalDetalleMes.classList.remove('mostrar');
+        });
+
+        agregarEventoBtn.addEventListener('click', () => {
+            modalEvento.classList.add('mostrar');
+        });
+
+        formularioEvento.addEventListener('submit', (e) => {
             e.preventDefault();
-            const titulo = document.getElementById('titulo').value;
-            const dia = document.getElementById('dia').value;
-            const descripcion = document.getElementById('descripcion').value;
+            const mes = formularioEvento.dataset.mes;
+            const semana = document.getElementById('evento-semana').value;
+            const nombre = document.getElementById('evento-nombre').value.trim();
+            const descripcion = document.getElementById('evento-descripcion').value.trim();
 
-            if (eventoEnEdicion) {
-                // Update existing event
-                eventoEnEdicion.dataset.titulo = titulo;
-                eventoEnEdicion.dataset.dia = dia;
-                eventoEnEdicion.dataset.descripcion = descripcion;
-                eventoEnEdicion.innerHTML = `
-                    Día ${dia}: ${titulo}
-                    <div class="evento-acciones">
-                        <button class="btn-editar">✏️</button>
-                        <button class="btn-eliminar">🗑️</button>
-                    </div>
-                `;
-            } else {
-                // Create new event
-                const evento = crearEvento(titulo, dia, descripcion, semanaSeleccionada);
-                semanaSeleccionada.appendChild(evento);
+            if (!nombre) {
+                alert('El nombre del evento no puede estar vacío.');
+                return;
             }
+
+            if (!eventosGuardados[mes]) eventosGuardados[mes] = {};
+            if (!eventosGuardados[mes][semana]) eventosGuardados[mes][semana] = [];
             
-            ajustarAlturaSemanaPorContenido(semanaSeleccionada);
-            modal.style.display = 'none';
-            formulario.reset();
-            eventoEnEdicion = null;
+            const index = formularioEvento.dataset.index;
+            if (index !== undefined) {
+                eventosGuardados[mes][semana][index] = { nombre, descripcion };
+                delete formularioEvento.dataset.index;
+            } else {
+                eventosGuardados[mes][semana].push({ nombre, descripcion });
+            }
+
+            guardarEventos();
+            modalEvento.classList.remove('mostrar');
+            renderizarEventosMes(mes);
+        });
+
+        cancelarEventoBtn.addEventListener('click', () => {
+            modalEvento.classList.remove('mostrar');
+        });
+
+        function editarEvento(e) {
+            const mes = formularioEvento.dataset.mes; // Asegúrate de que esto esté configurado correctamente
+            const semana = e.target.dataset.semana;
+            const index = e.target.dataset.index;
+            const evento = eventosGuardados[mes][semana][index];
+
+            document.getElementById('evento-nombre').value = evento.nombre;
+            document.getElementById('evento-semana').value = semana;
+            document.getElementById('evento-descripcion').value = evento.descripcion;
+
+            formularioEvento.dataset.index = index; // Asegúrate de que esto esté configurado correctamente
+            modalEvento.classList.add('mostrar');
         }
+
+        // Eliminar evento
+        function eliminarEvento(e) {
+            const mes = formularioEvento.dataset.mes; // Obtenemos el mes directamente del formulario
+            const semana = e.target.dataset.semana;
+            const index = e.target.dataset.index;
+
+            console.log(`Eliminar evento: Mes: ${mes}, Semana: ${semana}, Index: ${index}`); // Depuración
+
+            if (confirm('¿Estás seguro de eliminar este evento?')) {
+                // Eliminar el evento del objeto de eventos guardados
+                eventosGuardados[mes][semana].splice(index, 1);
+                
+                // Si la semana ya no tiene eventos, la eliminamos del objeto
+                if (eventosGuardados[mes][semana].length === 0) {
+                    delete eventosGuardados[mes][semana];
+                }
+
+                // Si el mes ya no tiene semanas con eventos, lo eliminamos del almacenamiento
+                if (Object.keys(eventosGuardados[mes]).length === 0) {
+                    delete eventosGuardados[mes];
+                }
+
+                guardarEventos();
+                renderizarEventosMes(mes); // Renderizamos los eventos del mes actual
+            }
+        }
+
+        [modalDetalleMes, modalEvento].forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('mostrar');
+                }
+            });
+        });
+
+        actualizarVistaMeses();
+    });
     </script>
 </body>
 </html>
